@@ -19,6 +19,12 @@ pipeline {
                 bat 'npm test'
             }
         }
+
+        stage('Code Quality') {
+            steps {
+                bat 'npm run quality'
+            }
+        }
     }
 
     post {

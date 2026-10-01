@@ -13,7 +13,8 @@
     "build": "browserify -r jquery > public/js/bundle.js",
     "cleanup": "mongo express-todo --eval 'db.todos.remove({});'",
     "test": "node --test tests/utils.test.js",
-    "security": "snyk test"
+    "security": "snyk test",
+    "quality": "eslint app.js utils.js mongoose-db.js typeorm-db.js routes service entity --max-warnings 30"
   },
   "dependencies": {
     "adm-zip": "0.4.7",
@@ -51,6 +52,7 @@
   },
   "devDependencies": {
     "browserify": "^13.1.1",
+    "eslint": "^10.11.0",
     "nodemon": "^2.0.7",
     "snyk": "^1.244.0"
   },
