@@ -99,7 +99,7 @@ docker run -d ^
 --network sit223-73hd-devops_default ^
 -p 3003:3001 ^
 -v uptime-kuma-data:/app/data ^
-louislam/uptime-kuma:1
+louislam/uptime-kuma:2
 '''
 
                     bat 'docker stats --no-stream goof-release'
