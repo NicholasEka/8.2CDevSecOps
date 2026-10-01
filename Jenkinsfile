@@ -117,3 +117,15 @@ louislam/uptime-kuma:1
                 }
             }
         }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check the Jenkins console output.'
+        }
+    }
+}
