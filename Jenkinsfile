@@ -25,6 +25,26 @@ pipeline {
                 bat 'npm run quality'
             }
         }
+
+        stage('Security') {
+            steps {
+                script {
+                    def auditStatus = bat(
+                        script: 'npm audit --omit=dev --json > npm-audit.json',
+                        returnStatus: true
+                    )
+
+                    echo "npm audit completed with exit code ${auditStatus}."
+                    echo "Security findings are recorded in npm-audit.json for review."
+                }
+            }
+
+            post {
+                always {
+                    archiveArtifacts artifacts: 'npm-audit.json', fingerprint: true
+                }
+            }
+        }
     }
 
     post {
