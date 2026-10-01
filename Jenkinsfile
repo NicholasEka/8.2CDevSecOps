@@ -48,6 +48,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
+                bat 'docker rm -f goof-monitor 2>nul || exit /b 0'
                 bat 'docker rm -f goof-release 2>nul || exit /b 0'
                 bat 'docker compose down --remove-orphans'
                 bat 'docker compose up --build -d goof-mongo goof'
@@ -78,15 +79,41 @@ pipeline {
                 }
             }
         }
-    }
 
-    post {
-        success {
-            echo 'Pipeline completed successfully.'
-        }
+        stage('Monitoring') {
+            steps {
+                script {
+                    echo 'Checking released application health...'
 
-        failure {
-            echo 'Pipeline failed. Check the Jenkins console output.'
+                    bat '''
+curl --fail --retry 5 --retry-delay 3 http://localhost:3002 >nul
+'''
+
+                    echo 'Release health check passed: HTTP service is responding.'
+
+                    bat 'docker rm -f goof-monitor 2>nul || exit /b 0'
+
+                    bat '''
+docker run -d ^
+--name goof-monitor ^
+--network sit223-73hd-devops_default ^
+-p 3003:3001 ^
+-v uptime-kuma-data:/app/data ^
+louislam/uptime-kuma:1
+'''
+
+                    bat 'docker stats --no-stream goof-release'
+                    bat 'docker ps'
+                }
+            }
+
+            post {
+                failure {
+                    echo 'ALERT: Production health check failed.'
+                }
+
+                success {
+                    echo 'Monitoring check completed successfully.'
+                }
+            }
         }
-    }
-}
