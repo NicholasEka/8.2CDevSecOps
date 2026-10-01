@@ -45,6 +45,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Deploy') {
+            steps {
+                bat 'docker compose down --remove-orphans'
+                bat 'docker compose up --build -d goof-mongo goof'
+                bat 'docker ps'
+            }
+        }
     }
 
     post {
